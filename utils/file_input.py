@@ -49,6 +49,15 @@ def construct_fileset(n_files_max_per_sample, use_xcache=False, af_name="", loca
         "data": None
     }
 
+    # nicer labels for plots
+    process_labels = {
+        "ttbar": r"$t\bar{t}$",
+        "single_top_s_chan": r"$s$-channel single top",
+        "single_top_t_chan": r"$t$-channel single top",
+        "single_top_tW": r"$tW$",
+        "wjets": r"$W$+jets"
+    }
+
     # list of files
     with open("nanoaod_inputs.json") as f:
         file_info = json.load(f)
@@ -85,7 +94,7 @@ def construct_fileset(n_files_max_per_sample, use_xcache=False, af_name="", loca
                         download_file(remote, local)
                 file_paths = local_paths
             nevts_total = sum([f["nevts"] for f in file_list])
-            metadata = {"process": process, "variation": variation, "nevts": nevts_total, "xsec": xsec_info[process]}
+            metadata = {"process": process, "variation": variation, "nevts": nevts_total, "xsec": xsec_info[process], "process_label": process_labels[process]}
             # coffea now wants file list entries as dict instead of list with format {path_1: treename, path_2: treename}
             file_paths = dict(zip(file_paths, ["Events"]*len(file_paths)))
             fileset.update({f"{process}__{variation}": {"files": file_paths, "metadata": metadata}})
