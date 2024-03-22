@@ -39,11 +39,9 @@ import dask
 import dask_awkward as dak
 import hist.dask
 import coffea
-import matplotlib.pyplot as plt
 import numpy as np
 import uproot
-from dask.diagnostics import ProgressBar
-from dask.distributed import Client, progress
+from dask.distributed import Client
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 from coffea.analysis_tools import PackedSelection
@@ -133,13 +131,6 @@ ax.set_ylim([0, 8000])
 
 fig.savefig(fig_dir / "trijet_mass.png", dpi=300)
 fig
-
-# or in the pyplot interface
-# hist_reco_mtop.compute().plot()
-# plt.vlines(175, 0, 10000, colors=["grey"], linestyle="dotted")
-# plt.text(180, 150, "$m_{t} = 175$ GeV")
-# plt.xlim([0, 375])
-# plt.ylim([0, 8000]);
 
 # %% [markdown]
 # This all matches the (non-Dask) versions of the plots from last summer — see the notebook linked above. Not surprising, but reassuring!
@@ -254,10 +245,11 @@ def create_histograms(events):
 # %%
 # fileset preparation
 N_FILES_MAX_PER_SAMPLE = 1
-fileset = utils.file_input.construct_fileset(N_FILES_MAX_PER_SAMPLE)  # compared to coffea 0.7: list of file paths becomes list of dicts (path: trename)
+# compared to coffea 0.7: list of file paths becomes list of dicts (path: trename)
+fileset = utils.file_input.construct_fileset(N_FILES_MAX_PER_SAMPLE)
 
-# fileset = {"ttbar__nominal": fileset["ttbar__nominal"]}
-fileset
+# fileset = {"ttbar__nominal": fileset["ttbar__nominal"]}  # to only process nominal ttbar
+# fileset
 
 # %% [markdown]
 # Now we can start using `coffea` with its Dask capabilities. One of the things we need to do is to build the full task graph, which requires looping over all the sample variations (`samples`)
@@ -267,7 +259,7 @@ fileset
 # pre-process
 samples, _ = dataset_tools.preprocess(fileset, step_size=250_000)
 
-# workaround for https://github.com/CoffeaTeam/coffea/issues/1050 (metadata gets dropped)
+# workaround for https://github.com/CoffeaTeam/coffea/issues/1050 (metadata gets dropped, already fixed)
 for k, v in samples.items():
     v["metadata"] = fileset[k]["metadata"]
 
@@ -307,13 +299,6 @@ ax.set_title(">= 4 jets, 1 b-tag");
 
 fig.savefig(fig_dir / "coffea_4j_1b.png", dpi=300)
 
-# or in the pyplot interface
-# full_histogram_4j1b[120j::hist.rebin(2), :, "nominal"].stack("process")[::-1].plot(
-#     stack=True, histtype="fill", linewidth=1,edgecolor="grey"
-# )
-# plt.legend(frameon=False)
-# plt.title(">= 4 jets, 1 b-tag");
-
 # %%
 artists = full_histogram_4j2b[:, :, "nominal"].stack("process")[::-1].plot(
     stack=True, histtype="fill", linewidth=1,edgecolor="grey"
@@ -326,13 +311,6 @@ ax.legend(frameon=False)
 ax.set_title(">= 4 jets, >= 2 b-tags");
 
 fig.savefig(fig_dir / "coffea_4j_2b.png", dpi=300)
-
-# pyplot
-# full_histogram_4j2b[:, :, "nominal"].stack("process")[::-1].plot(
-#     stack=True, histtype="fill", linewidth=1,edgecolor="grey"
-# )
-# plt.legend(frameon=False)
-# plt.title(">= 4 jets, >= 2 b-tags");
 
 # %% [markdown]
 # This is a plot you can compare to the one in the full AGC notebook — you'll notice they look the same. Success!
