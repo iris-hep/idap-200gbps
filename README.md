@@ -1,15 +1,7 @@
-# AGC Demo Day #4: AGC + coffea 2024
+# IDAP 200 Gbps challenge
 
-This is a quick demo showcasing a part of the [AGC](https://agc.readthedocs.io/) running with [`coffea` 2024](https://github.com/CoffeaTeam/coffea) on coffea-casa, presented in the context of [AGC Demo Day #4](https://indico.cern.ch/e/agc-demo-day-4).
+This repository is based on a contribution for [AGC Demo Day #4](https://indico.cern.ch/e/agc-demo-day-4) which can be found at a dedicated [calver-coffea-agc-demo](https://github.com/alexander-held/calver-coffea-agc-demo) repository.
 
-## Environment revisions
-
-As of 2024-02-29, there might be some environment differences on coffea-casa that require manual editing.
-To do so, install from the `update-env-requirements.txt` file before running the notebook.
-
-```console
-python -m pip install --upgrade --requirement update-env-requirements.txt
-```
 
 ## Acknowledgements
 
