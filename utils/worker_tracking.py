@@ -46,16 +46,24 @@ def get_timestamps_and_counts():
 
     return timestamps, nworkers, avg_num_workers
 
-
-def plot_worker_count(timestamps, nworkers, avg_num_workers):
-    fig, ax = plt.subplots()
-    ax.plot(timestamps, nworkers)
-    ax.set_xlabel("time")
-    ax.set_ylabel("number of workers")
-    ax.set_ylim([0, ax.get_ylim()[1]*1.2])
-    ax.set_title(f"worker count over time, average: {avg_num_workers:.1f}")
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
-
-    for tick in ax.get_xticklabels():
+def plot_worker_count(timestamps, nworkers, avg_num_workers, times_for_rates, instantaneous_rates):
+    fig, ax1 = plt.subplots(constrained_layout=True)
+    ax1.plot(timestamps, nworkers, linewidth=2, color="C0")
+    ax1.set_xlabel("time")
+    ax1.set_ylabel("number of workers", color="C0")
+    ax1.set_ylim([0, ax1.get_ylim()[1]*1.1])
+    # ax1.set_title(f"worker count over time, average: {avg_num_workers:.1f}")
+    ax1.set_title(f"worker count and data rate over time")
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+    ax1.tick_params(axis="y", labelcolor="C0")
+                              
+    for tick in ax1.get_xticklabels():
         tick.set_rotation(45)
         tick.set_horizontalalignment("right")
+    
+    ax2 = ax1.twinx()
+    ax2.plot(times_for_rates, instantaneous_rates, marker="v", linewidth=0, color="C1")
+    ax2.set_ylabel("data rate [Gbps]", color="C1")
+    ax2.set_ylim([0, ax2.get_ylim()[1]*1.1])
+    ax2.tick_params(axis="y", labelcolor="C1")
+    fig.savefig("worker_count_data_rate_over_time.png")
