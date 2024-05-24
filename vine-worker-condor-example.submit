@@ -3,9 +3,10 @@
 #
 
 universe = docker
-docker_image = hub.opensciencegrid.org/coffea-casa/cc-analysis-alma8:2024.04.22post0
+docker_image = hub.opensciencegrid.org/coffea-casa/cc-analysis-alma8:$ENV(TAG)
+
 executable = /usr/bin/echo
-arguments = ignored by condor-docker ... --cores $$([TARGET.Cpus]) --memory $$([TARGET.Memory]) --disk $$([TARGET.Disk/1024])  --ssl --memory 32000 --disk 64000 --cores 8 -t 600 btovar-40nd-2eedu.dask.cmsaf-prod.flatiron.hollandhpc.org 8786
+arguments = ignored by condor+docker
 
 container_service_names = dask,nanny
 dask_container_port   = 8786
@@ -18,13 +19,15 @@ nanny_container_port   = 8001
 
 should_transfer_files = yes
 when_to_transfer_output = on_exit
+
 output = worker.$(CLUSTER).$(PROCESS).output
 error = worker.$(CLUSTER).$(PROCESS).error
 log = workers.log
+
 +JobMaxSuspendTime = 0
 
 request_cpus = 8
 request_memory = 32000
 request_disk = 65536000
-queue 100
 
+queue 12
